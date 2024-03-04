@@ -1,14 +1,25 @@
 import cv2
 
+def draw_red_box(frame):
+    height, width, _ = frame.shape
+    box_size = 150
+    x = int((width - box_size) / 2)
+    y = int((height - box_size) / 2)
+    cv2.rectangle(frame, (x, y), (x + box_size, y + box_size), (0, 0, 255), 2)
+    cv2.line(frame, (x + int(box_size/2), 0), (x + int(box_size/2), height), (0, 255, 0), 2)
+    cv2.line(frame, (0, y + int(box_size/2)), (width, y + int(box_size/2)), (0, 255, 0), 2)
+    return x, y, box_size
+
+
 cam = cv2.VideoCapture(0)
 
 while True:
     ret, frame = cam.read()
-    if ret is False:
+    if not ret:
         break
 
-    roi = frame[269:795, 537:1416]
-    rows, cols, _ = roi.shape
+    x, y, box_size = draw_red_box(frame)
+    roi = frame[y:y+box_size, x:x+box_size]    
     gray_roi = cv2.cvtColor(roi, cv2.COLOR_BGR2GRAY)
     gray_roi = cv2.GaussianBlur(gray_roi, (7, 7), 0)
     black_threshold = 30
@@ -16,17 +27,16 @@ while True:
     contours, _ = cv2.findContours(black_mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
 
     for cnt in contours:
-        (x, y, w, h) = cv2.boundingRect(cnt)
+        x, y, w, h = cv2.boundingRect(cnt)
         area = cv2.contourArea(cnt)
-        if 3000 < area < 3500:            
-            cv2.rectangle(roi, (x, y), (x+w, y+h), (255, 0, 0), 2)
-            cv2.line(roi, (x + int(w/2), 0), (x + int(w/2), rows), (0, 255, 0), 2)
-            cv2.line(roi, (0, y + int(h/2)), (cols, y + int(h/2)), (0, 255, 0), 2)
-            # print("Area :",area)
+        if   area >= 600 :            
+            cv2.rectangle(roi, (x, y), (x+w, y+h), (0, 255, 0), 2)  
+            cv2.putText(roi, 'Eye', (x, y), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)  
+            print("Area : " , area)
             
-
-
-    cv2.imshow("DETECT-BLACKEYE", roi)
+    resized_frame = cv2.resize(frame, (1280, 720))  # ปรับขนาดภาพเป็น 1280x720
+    cv2.imshow("DETECT-BLACKEYE", resized_frame)
+    
 
     key = cv2.waitKey(30)
     if key == 27:
