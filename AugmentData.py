@@ -3,8 +3,8 @@ import os
 import imgaug as ia
 from imgaug import augmenters as iaa
 
-input_folder = "/Users/payuphatboontaokaew/Downloads/Dataset"
-output_folder = "//Users/payuphatboontaokaew/Documents/GitHub/KidneyLifePlus/datasetAug"
+input_folder = "#"
+output_folder = "#"
 augmented_images_per_input = 5
 
 # Define the desired size
