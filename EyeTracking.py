@@ -6,8 +6,8 @@ def draw_red_box(frame):
     x = int((width - box_size) / 2)
     y = int((height - box_size) / 2)
     cv2.rectangle(frame, (x, y), (x + box_size, y + box_size), (0, 0, 255), 2)
-    cv2.line(frame, (x + int(box_size/2), 0), (x + int(box_size/2), height), (0, 255, 0), 2)
-    cv2.line(frame, (0, y + int(box_size/2)), (width, y + int(box_size/2)), (0, 255, 0), 2)
+    cv2.line(frame, (x + int(box_size/2), 0), (x + int(box_size/2), height), (0, 0, 255), 2)
+    cv2.line(frame, (0, y + int(box_size/2)), (width, y + int(box_size/2)), (0, 0, 255), 2)
     return x, y, box_size
 
 
@@ -29,12 +29,13 @@ while True:
     for cnt in contours:
         x, y, w, h = cv2.boundingRect(cnt)
         area = cv2.contourArea(cnt)
-        if   area >= 600 :            
+        if   area >= 1000 and area <= 1500:            
             cv2.rectangle(roi, (x, y), (x+w, y+h), (0, 255, 0), 2)  
             cv2.putText(roi, 'Eye', (x, y), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)  
             print("Area : " , area)
             
-    resized_frame = cv2.resize(frame, (1280, 720))  # ปรับขนาดภาพเป็น 1280x720
+            
+    resized_frame = cv2.resize(frame, (1280, 720))   
     cv2.imshow("DETECT-BLACKEYE", resized_frame)
     
 
